@@ -68,6 +68,17 @@ importers:
       vite: 2.9.12
       vite-plugin-pages: 0.25.0_vite@2.9.12
 
+  test-template:
+    specifiers:
+      '@vitejs/plugin-vue': ^2.3.3
+      vite: ^2.9.9
+      vue: ^3.2.25
+    dependencies:
+      vue: 3.2.37
+    devDependencies:
+      '@vitejs/plugin-vue': 2.3.3_vite@2.9.12+vue@3.2.37
+      vite: 2.9.12
+
 packages:
 
   /@antfu/eslint-config-basic/0.25.1_t5sxc3bagki3l2mk6notn5hgtm:

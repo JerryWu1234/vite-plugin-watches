@@ -9,7 +9,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Unocss from 'unocss/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/__inspect/',
+  base: '/__debugger__/',
   resolve: {
     alias: {
       '~/': __dirname,
