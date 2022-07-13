@@ -15,6 +15,11 @@ export default defineConfig({
       '~/': __dirname,
     },
   },
+  build: {
+    target: 'esnext',
+    minify: true,
+    emptyOutDir: true,
+  },
   plugins: [
     vue(),
     Pages({

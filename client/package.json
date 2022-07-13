@@ -10,6 +10,8 @@
   "dependencies": {
     "@vueuse/core": "^8.9.0",
     "@vueuse/router": "^8.9.0",
+    "vite-dev-rpc": "^0.1.0",
+    "vite-hot-client": "^0.1.0",
     "vue": "^3.2.25",
     "vue-router": "^4.1.1"
   },
