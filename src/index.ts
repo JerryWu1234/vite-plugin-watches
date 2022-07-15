@@ -4,11 +4,10 @@ import { red } from 'kolorist'
 import sirv from 'sirv'
 import { createRPCServer } from 'vite-dev-rpc'
 import { createFilter } from '@rollup/pluginutils'
-import type { TransformInfo } from './types'
+import type { ModuleInfo, RPCFunctions, TransformInfo } from './types'
 
 function vitePlugin() {
   let config: ResolvedConfig
-  const idMap: Record<string, string> = {}
   const transformMap: Record<string, TransformInfo[]> = {}
   const dummyLoadPluginName = '__load__'
 
@@ -34,16 +33,19 @@ function vitePlugin() {
 
         const result = typeof _result === 'string' ? _result : _result?.code
 
-        if (filter(id) && result != null && !id.includes('?') && !id.includes('node_modules')) {
+        if (filter(id) && result != null && !id.includes('plugin-vue:export-helper')) {
           // the last plugin must be `vite:import-analysis`, if it's already there, we reset the stack
-          if (transformMap[id] && transformMap[id].slice(-1)[0]?.name === 'vite:import-analysis')
+
+          if (transformMap[id] && transformMap[id].slice(-1)[0]?.name === 'plugin-vue:export-helper')
             delete transformMap[id]
+
           // initial tranform (load from fs), add a dummy
           if (!transformMap[id])
             transformMap[id] = [{ name: dummyLoadPluginName, result: code }]
-        }
 
-        return _result
+          transformMap[id].push({ name: plugin.name, result })
+          return _result
+        }
       }
     }
   }
@@ -51,17 +53,24 @@ function vitePlugin() {
   function configureServer(serve: ViteDevServer) {
     serve.middlewares.use('/__debugger__', sirv(resolve(`${__dirname}`, '../client/dist')))
 
-    createRPCServer('vite-plugin-watches', serve.ws, {
+    createRPCServer<RPCFunctions>('vite-plugin-watches', serve.ws, {
       list() {
-        Object.keys(transformMap).map((id) => {
-          const deps = Array.from(serve.moduleGraph.getModuleById(id)?.importedModules || [])
+        const modules = Object.keys(transformMap).map((id): ModuleInfo => {
           const plugins = transformMap[id]?.map(i => i.name)
+          const deps = Array.from(serve.moduleGraph.getModuleById(id)?.importedModules || [])
+            .map(i => i.id || '')
+            .filter(Boolean)
           return {
             id,
             plugins,
             deps,
           }
         })
+
+        return {
+          root: config.root,
+          modules,
+        }
       },
     })
 

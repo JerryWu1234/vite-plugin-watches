@@ -1,3 +1,4 @@
 {
-  "recommendations": ["Vue.volar"]
+  "recommendations": ["Vue.volar"],
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }
