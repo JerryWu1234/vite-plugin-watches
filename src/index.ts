@@ -56,7 +56,7 @@ function vitePlugin() {
     createRPCServer<RPCFunctions>('vite-plugin-watches', serve.ws, {
       list() {
         const modules = Object.keys(transformMap).map((id): ModuleInfo => {
-          const plugins = transformMap[id]?.map(i => i.name)
+          const plugins = transformMap[id]
           const deps = Array.from(serve.moduleGraph.getModuleById(id)?.importedModules || [])
             .map(i => i.id || '')
             .filter(Boolean)

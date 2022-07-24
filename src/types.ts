@@ -4,7 +4,7 @@ export interface ModulesList {
 }
 export interface ModuleInfo {
   id: string
-  plugins: string[]
+  plugins: TransformInfo[]
   deps: string[]
 }
 export interface RPCFunctions {

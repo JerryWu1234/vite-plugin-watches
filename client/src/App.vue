@@ -3,7 +3,7 @@
     <Suspense>
       <router-view />
       <template #fallback>
-        loading
+        Loading...
       </template>
     </Suspense>
   </main>

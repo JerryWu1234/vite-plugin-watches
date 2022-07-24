@@ -7,8 +7,10 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Unocss from 'unocss/vite'
+process.env.NODE_ENV = 'development'
 // https://vitejs.dev/config/
 export default defineConfig({
+  mode: '',
   base: '/__debugger__/',
   resolve: {
     alias: {
