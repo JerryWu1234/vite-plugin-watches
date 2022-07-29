@@ -7,18 +7,21 @@ const fromEl = ref<HTMLTextAreaElement>()
 onMounted(() => {
   useCodeMirror(fromEl, code, {
     mode: 'javascript',
-    readOnly: false,
     lineNumbers: true,
     scrollbarStyle: 'null',
   })
 })
+
+const ff = () => {
+  console.log(code)
+}
 </script>
 
 <template>
   <div class="w-full h-[calc(100% - 45px)]] ">
-    <textarea ref="fromEl" v-text="from" />
+    <textarea ref="fromEl" v-text="code" />
     <div class="text-right py-2 border-t border-main px-1">
-      <button class="btn !cursor-pointer">
+      <button class="btn !cursor-pointer" @click="ff">
         submit
       </button>
     </div>

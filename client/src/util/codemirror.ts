@@ -30,6 +30,7 @@ export const useCodeMirror = (
     }
 
     input.value = mirror.getValue()
+    console.log('input.value ', input.value)
   })
 
   watch(

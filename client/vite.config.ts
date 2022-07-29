@@ -7,6 +7,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Unocss from 'unocss/vite'
+import inspect from '../dist'
 process.env.NODE_ENV = 'development'
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -23,6 +24,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   plugins: [
+    inspect(),
     vue(),
     Pages({
       pagesDir: 'pages',
@@ -48,5 +50,6 @@ export default defineConfig({
         '@vueuse/core',
       ],
     }),
+    inspect(),
   ],
 })

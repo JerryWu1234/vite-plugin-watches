@@ -15,6 +15,10 @@ function vitePlugin() {
   return <Plugin>{
     name: 'vite-plugin-watches',
     apply: 'serve',
+    // async handleHotUpdate({ file, read, server }) {
+    //   const content = await read()
+    //   // console.log(file, read, server, content)
+    // },
     configResolved(resolvedConfig) {
       config = resolvedConfig
       config.plugins.forEach(loopPlugin)
@@ -25,17 +29,15 @@ function vitePlugin() {
   function loopPlugin(plugin: Plugin) {
     if (plugin.transform) {
       const _transform = plugin.transform
+
       plugin.transform = async function (...args) {
         const code = args[0]
         const id = args[1]
-
         const _result = await _transform.apply(this, args)
 
         const result = typeof _result === 'string' ? _result : _result?.code
-
-        if (filter(id) && result != null && !id.includes('plugin-vue:export-helper')) {
+        if (filter(id) && result != null) {
           // the last plugin must be `vite:import-analysis`, if it's already there, we reset the stack
-
           if (transformMap[id] && transformMap[id].slice(-1)[0]?.name === 'plugin-vue:export-helper')
             delete transformMap[id]
 
@@ -51,9 +53,20 @@ function vitePlugin() {
   }
 
   function configureServer(serve: ViteDevServer) {
-    serve.middlewares.use('/__debugger__', sirv(resolve(`${__dirname}`, '../client/dist')))
+    serve.middlewares.use('/__debugger__', sirv(resolve(`${__dirname}`, '../client/dist'), {
+      dev: true,
+      single: true,
+    }))
 
     createRPCServer<RPCFunctions>('vite-plugin-watches', serve.ws, {
+      clear(id: string) {
+        if (id) {
+          const m = serve.moduleGraph.getModuleById(id)
+          if (m)
+            serve.moduleGraph.invalidateModule(m)
+          delete transformMap[id]
+        }
+      },
       list() {
         const modules = Object.keys(transformMap).map((id): ModuleInfo => {
           const plugins = transformMap[id]
