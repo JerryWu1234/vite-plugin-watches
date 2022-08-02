@@ -1,15 +1,19 @@
-# pkg-name
+# vite-plugin-watches
 
-[![NPM version](https://img.shields.io/npm/v/pkg-name?color=a1b858&label=)](https://www.npmjs.com/package/pkg-name)
+## introduction
 
-## Sponsors
+A vite plugin which provides the ability that modify code online and then doesn't modfy local code
 
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg">
-    <img src='https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg'/>
-  </a>
-</p>
+![alt](./20220802-170735.gif)
 
-## License
+## installation
+```bash
+# pnpm 
+pnpm install vite-plugin-vue-inspector -D
 
-[MIT](./LICENSE) License © 2022 [Anthony Fu](https://github.com/antfu)
+# yarn
+yarn add vite-plugin-vue-inspector -D
+
+# npm
+npm install vite-plugin-vue-inspector -D
+```
