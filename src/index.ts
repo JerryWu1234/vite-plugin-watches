@@ -10,15 +10,15 @@ function vitePlugin() {
   let config: ResolvedConfig
   const transformMap: Record<string, TransformInfo[]> = {}
   const dummyLoadPluginName = '__load__'
-
+  const updateList: Record<string, string> = {}
   const filter = createFilter()
   return <Plugin>{
     name: 'vite-plugin-watches',
     apply: 'serve',
-    // async handleHotUpdate({ file, read, server }) {
-    //   const content = await read()
-    //   // console.log(file, read, server, content)
-    // },
+    async handleHotUpdate(ctx) {
+      delete transformMap[ctx.file]
+      delete updateList[ctx.file]
+    },
     configResolved(resolvedConfig) {
       config = resolvedConfig
       config.plugins.forEach(loopPlugin)
@@ -31,9 +31,16 @@ function vitePlugin() {
       const _transform = plugin.transform
 
       plugin.transform = async function (...args) {
-        const code = args[0]
+        let code = args[0]
         const id = args[1]
-        const _result = await _transform.apply(this, args)
+        if (updateList[id] && !transformMap[id]) {
+          if (!updateList[id])
+            return
+          code = updateList[id]
+          // console.log(id)
+        }
+
+        const _result = await _transform.apply(this, [code, id])
 
         const result = typeof _result === 'string' ? _result : _result?.code
         if (filter(id) && result != null) {
@@ -59,6 +66,27 @@ function vitePlugin() {
     }))
 
     createRPCServer<RPCFunctions>('vite-plugin-watches', serve.ws, {
+      updateCode(code: string, id: string) {
+        const graph = serve.moduleGraph.getModuleById(id)
+        if (graph) {
+          serve.moduleGraph.invalidateModule(graph)
+          delete transformMap[id]
+        }
+        updateList[id] = code
+        // serve.ws.send({
+        //   type: 'update',
+        //   updates: [{
+        //     type: 'js-update',
+        //     path: graph?.url || '',
+        //     acceptedPath: graph?.url || '',
+        //     timestamp: new Date().getDate(),
+        //   }],
+        // })
+        serve.ws.send({
+          type: 'full-reload',
+          path: '*',
+        })
+      },
       clear(id: string) {
         if (id) {
           const m = serve.moduleGraph.getModuleById(id)

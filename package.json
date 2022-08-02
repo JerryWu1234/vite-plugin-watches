@@ -33,7 +33,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "client/dist"
   ],
   "scripts": {
     "build": "tsup",

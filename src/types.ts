@@ -10,6 +10,7 @@ export interface ModuleInfo {
 export interface RPCFunctions {
   list(): ModulesList
   clear(id: string): void
+  updateCode(code: string, id: string): void
 }
 export interface TransformInfo {
   name: string

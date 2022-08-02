@@ -12,7 +12,6 @@ async function pageRefresh() {
     await fetch(id.value)
 
     const list = await refresh()
-
     content.value = list.modules.filter(item => item.id === id.value)
   }
   catch (_) {}
