@@ -1,17 +1,16 @@
 {
   "name": "vite-plugin-watches",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "packageManager": "pnpm@7.2.1",
   "description": "",
   "license": "MIT",
-  "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/antfu/vite-plugin-watches#readme",
+  "homepage": "https://github.com/wulinsheng123/vite-plugin-watches/README.md",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/vite-plugin-watches.git"
+    "url": "git+https://github.com/wulinsheng123/vite-plugin-watches.git"
   },
-  "bugs": "https://github.com/antfu/vite-plugin-watches/issues",
+  "bugs": "https://github.com/wulinsheng123/vite-plugin-watches/issues",
   "keywords": [],
   "sideEffects": false,
   "exports": {
@@ -34,7 +33,8 @@
   },
   "files": [
     "dist",
-    "client/dist"
+    "client/dist",
+    "./20220802-170735.gif"
   ],
   "scripts": {
     "build": "tsup",
