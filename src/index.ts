@@ -1,10 +1,11 @@
 import { resolve } from 'path'
-import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite'
+import type { ModuleNode, Plugin, ResolvedConfig, ViteDevServer } from 'vite'
 import { red } from 'kolorist'
 import sirv from 'sirv'
 import { createRPCServer } from 'vite-dev-rpc'
 import { createFilter } from '@rollup/pluginutils'
-import type { ModuleInfo, RPCFunctions, TransformInfo } from './types'
+import { propagateUpdate } from './utils'
+import type { ModuleInfo, RPCFunctions, TransformInfo, Update } from './types'
 
 function vitePlugin() {
   let config: ResolvedConfig
@@ -33,6 +34,7 @@ function vitePlugin() {
       plugin.transform = async function (...args) {
         let code = args[0]
         const id = args[1]
+
         if (updateList[id] && !transformMap[id]) {
           if (!updateList[id])
             return
@@ -67,24 +69,44 @@ function vitePlugin() {
 
     createRPCServer<RPCFunctions>('vite-plugin-watches', serve.ws, {
       updateCode(code: string, id: string) {
-        const graph = serve.moduleGraph.getModuleById(id)
+        const updates: Update[] = []
+        const timestamp = Date.now()
+        const c = serve.moduleGraph.getModulesByFile(id)
+        const graph = [...c!][0]
+        updateList[id] = code
+
         if (graph) {
           serve.moduleGraph.invalidateModule(graph)
           delete transformMap[id]
         }
-        updateList[id] = code
-        // serve.ws.send({
-        //   type: 'update',
-        //   updates: [{
-        //     type: 'js-update',
-        //     path: graph?.url || '',
-        //     acceptedPath: graph?.url || '',
-        //     timestamp: new Date().getDate(),
-        //   }],
-        // })
+        const boundaries = new Set<{
+          boundary: ModuleNode
+          acceptedVia: ModuleNode
+        }>()
+        console.log(graph)
+        const hasDeadEnd = propagateUpdate(graph!, boundaries)
+
+        if (hasDeadEnd) {
+          serve.ws.send({
+            type: 'full-reload',
+          })
+          return
+        }
+
+        updates.push(
+          ...[...boundaries].map(({ boundary, acceptedVia }) => {
+            return {
+              type: `${boundary.type}-update` as Update['type'],
+              timestamp,
+              path: acceptedVia.url,
+              acceptedPath: acceptedVia.url,
+            }
+          }),
+        )
+
         serve.ws.send({
-          type: 'full-reload',
-          path: '*',
+          type: 'update',
+          updates,
         })
       },
       clear(id: string) {

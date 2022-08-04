@@ -26,9 +26,6 @@ export const useCodeMirror = (
 ) => {
   const mirror = Codemirror.fromTextArea(textarea.value!, {
     ...options,
-    extraKeys: {
-      Tab: 'autocomplete',
-    },
   })
 
   mirror.on('keypress', () => {

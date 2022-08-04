@@ -9,11 +9,11 @@ A vite plugin which provides the ability that modify code online and then doesn'
 ## installation
 ```bash
 # pnpm 
-pnpm install vite-plugin-vue-inspector -D
+pnpm install vite-plugin-watches -D
 
 # yarn
-yarn add vite-plugin-vue-inspector -D
+yarn add vite-plugin-watches -D
 
 # npm
-npm install vite-plugin-vue-inspector -D
+npm install vite-plugin-watches -D
 ```

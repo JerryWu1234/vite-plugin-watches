@@ -16,3 +16,10 @@ export interface TransformInfo {
   name: string
   result: string
 }
+
+export interface Update {
+  type: 'js-update' | 'css-update'
+  path: string
+  acceptedPath: string
+  timestamp: number
+}

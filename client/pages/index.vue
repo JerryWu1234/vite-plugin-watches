@@ -3,7 +3,7 @@ import { searchResults } from '../src/util/search'
 
 const route = useRoute()
 const isRoot = computed(() => route.path === '/')
-// console.log(searchResults)
+//  console.log(searchResults)
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const isRoot = computed(() => route.path === '/')
           </keep-alive>
         </router-view>
         <template #fallback>
-          Loading...
+          Loading..1
         </template>
       </Suspense>
     </div>
